@@ -42,7 +42,7 @@ fn main() {
             _ => {
                 error = Some(Error::InvalidMove);
                 continue;
-            }
+            },
         };
 
         error = None;
