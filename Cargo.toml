@@ -1,0 +1,7 @@
+[package]
+name = "connect4"
+version = "0.1.0"
+authors = ["Sunjay Varma <varma.sunjay@gmail.com>"]
+
+[dependencies]
+ansi_term = "0.9"
