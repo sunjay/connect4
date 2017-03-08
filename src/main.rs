@@ -6,10 +6,11 @@ use std::iter;
 use std::io::{self, Write};
 use std::process::Command;
 
-use ansi_term::Colour::{Red, Yellow, White};
+use ansi_term::Colour::{Red, Yellow, White, Blue};
 
-use connect4::{Connect4, Piece, Error};
+use connect4::{Connect4, Piece, Winner, Error};
 use connect4::Piece::*;
+use connect4::Winner::*;
 
 fn main() {
     let mut game = Connect4::new();
@@ -46,8 +47,13 @@ fn main() {
         };
 
         error = None;
-        if let Err(err) = game.drop_piece(col) {
-            error = Some(err);
+        match game.drop_piece(col) {
+            Ok(Some(winner)) => {
+                println!("The winner is: {}", format_winner(winner));
+                break;
+            },
+            Ok(None) => (),
+            Err(err) => error = Some(err),
         }
     }
 }
@@ -91,6 +97,14 @@ fn format_piece(piece: Piece) -> String {
         PieceX => Red.bold().paint("\u{25CF}"),
         PieceO => Yellow.bold().paint("\u{25CF}"),
     })
+}
+
+fn format_winner(winner: Winner) -> String {
+    match winner {
+        WinnerX => format_piece(PieceX),
+        WinnerO => format_piece(PieceO),
+        Tie => format!("{}", Blue.bold().paint("tie")),
+    }
 }
 
 fn render_line() {
