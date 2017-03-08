@@ -75,7 +75,7 @@ impl Connect4 {
     }
 
     /// Drop the current piece into the given col
-    pub fn drop_piece(&mut self, col: usize) -> Result<Option<Winner>, Error> {
+    pub fn drop_piece(&mut self, col: usize) -> Result<(), Error> {
         if self.winner.is_some() || col >= COLS {
             return Err(Error::InvalidMove);
         }
@@ -90,7 +90,7 @@ impl Connect4 {
 
         self.winner = self.check_winner();
 
-        Ok(self.winner)
+        Ok(())
     }
 
     fn check_winner(&self) -> Option<Winner> {
@@ -120,7 +120,7 @@ impl Connect4 {
         let piece = self.columns[col][first_piece].unwrap();
 
         // count of this piece in all 8 directions
-        let mut directions = [0usize; 8];
+        let mut directions = [1usize; 8];
         // 4 because the game is called Connect 4
         for steps in 1..4 {
             for (i, dir) in [N, NE, E, SE, S, SW, W, NW].into_iter().enumerate() {

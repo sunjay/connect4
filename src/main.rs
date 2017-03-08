@@ -24,6 +24,12 @@ fn main() {
         render(&game);
 
         println!();
+
+        if let Some(winner) = game.winner() {
+            println!(" The winner is: {}\n", format_winner(winner));
+            break;
+        }
+
         render_error(error);
         println!(" Current piece: {}", format_piece(game.current_piece()));
         print!(" Drop piece into column (A-G): ");
@@ -47,13 +53,8 @@ fn main() {
         };
 
         error = None;
-        match game.drop_piece(col) {
-            Ok(Some(winner)) => {
-                println!("The winner is: {}", format_winner(winner));
-                break;
-            },
-            Ok(None) => (),
-            Err(err) => error = Some(err),
+        if let Err(err) = game.drop_piece(col) {
+            error = Some(err);
         }
     }
 }
