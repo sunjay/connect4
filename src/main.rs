@@ -13,22 +13,51 @@ use connect4::Piece::*;
 
 fn main() {
     let mut game = Connect4::new();
+    let mut error = None;
 
     let stdin = io::stdin();
 
     loop {
+        println!();
         Command::new("clear").status().unwrap();
         render(&game);
 
-        println!("\n Current piece: {}", format_piece(game.current_piece()));
+        println!();
+        render_error(error);
+        println!(" Current piece: {}", format_piece(game.current_piece()));
         print!(" Drop piece into column (A-G): ");
         flush_stdout();
 
         let mut buffer = String::new();
         stdin.read_line(&mut buffer).expect("Could not read input");
 
-        println!();
+        let col = match &buffer.trim().to_lowercase()[..] {
+            "a" => 0,
+            "b" => 1,
+            "c" => 2,
+            "d" => 3,
+            "e" => 4,
+            "f" => 5,
+            "g" => 6,
+            _ => {
+                error = Some(Error::InvalidMove);
+                continue;
+            }
+        };
+
+        error = None;
+        if let Err(err) = game.drop_piece(col) {
+            error = Some(err);
+        }
     }
+}
+
+fn render_error(error: Option<Error>) {
+    println!("{}", Red.bold().paint(match error {
+        Some(Error::InvalidMove) => " Invalid move",
+        Some(Error::NoSpaceLeftInColumn) => " No space available in this column",
+        None => "",
+    }));
 }
 
 fn render(game: &Connect4) {

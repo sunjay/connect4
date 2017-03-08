@@ -3,12 +3,8 @@ pub const COLS: usize = 7;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Error {
-    InvalidMove {
-        column: usize,
-    },
-    NoSpaceLeftInColumn {
-        column: usize,
-    },
+    InvalidMove,
+    NoSpaceLeftInColumn,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -57,17 +53,13 @@ impl Connect4 {
     /// Drop the current piece into the given col
     pub fn drop_piece(&mut self, col: usize) -> Result<(), Error> {
         if col >= COLS {
-            return Err(Error::InvalidMove {
-                column: col,
-            });
+            return Err(Error::InvalidMove);
         }
 
         let index = self.columns[col].iter().rposition(|t| t.is_none());
         match index {
             Some(index) => self.columns[col][index] = Some(self.current_piece),
-            None => return Err(Error::NoSpaceLeftInColumn {
-                column: col,
-            }),
+            None => return Err(Error::NoSpaceLeftInColumn),
         }
 
         self.current_piece = self.current_piece.opposite();
