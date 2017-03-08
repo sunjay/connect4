@@ -1,5 +1,5 @@
-const ROWS: usize = 6;
-const COLS: usize = 7;
+pub const ROWS: usize = 6;
+pub const COLS: usize = 7;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Error {
@@ -47,24 +47,16 @@ impl Connect4 {
     }
 
     pub fn to_rows(&self) -> Vec<Vec<Tile>> {
-        (0..self.rows()).map(|r| self.columns.iter().map(|col| col[r]).collect()).collect()
+        (0..ROWS).map(|r| self.columns.iter().map(|col| col[r]).collect()).collect()
     }
 
     pub fn current_piece(&self) -> Piece {
         self.current_piece
     }
 
-    pub fn rows(&self) -> usize {
-        self.columns[0].len()
-    }
-
-    pub fn cols(&self) -> usize {
-        self.columns.len()
-    }
-
     /// Drop the current piece into the given col
     pub fn drop_piece(&mut self, col: usize) -> Result<(), Error> {
-        if col >= self.cols() {
+        if col >= COLS {
             return Err(Error::InvalidMove {
                 column: col,
             });

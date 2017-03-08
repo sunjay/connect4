@@ -3,6 +3,8 @@ extern crate ansi_term;
 mod connect4;
 
 use std::iter;
+use std::io::{self, Write};
+use std::process::Command;
 
 use ansi_term::Colour::{Red, Yellow, White};
 
@@ -11,17 +13,26 @@ use connect4::Piece::*;
 
 fn main() {
     let mut game = Connect4::new();
-    game.drop_piece(0).unwrap();
-    game.drop_piece(0).unwrap();
-    game.drop_piece(1).unwrap();
-    game.drop_piece(2).unwrap();
-    game.drop_piece(2).unwrap();
 
-    render(game);
+    let stdin = io::stdin();
+
+    loop {
+        Command::new("clear").status().unwrap();
+        render(&game);
+
+        println!("\n Current piece: {}", format_piece(game.current_piece()));
+        print!(" Drop piece into column (A-G): ");
+        flush_stdout();
+
+        let mut buffer = String::new();
+        stdin.read_line(&mut buffer).expect("Could not read input");
+
+        println!();
+    }
 }
 
-fn render(game: Connect4) {
-    println!("{}  \n", ["A", "B", "C", "D", "E", "F", "G"].into_iter().fold(String::new(), |acc, s| {
+fn render(game: &Connect4) {
+    println!("\n{}  \n", ["A", "B", "C", "D", "E", "F", "G"].into_iter().fold(String::new(), |acc, s| {
         format!("{}   {}", acc, s)
     }));
 
@@ -63,4 +74,8 @@ fn render_bottom_line() {
     println!(" \u{2534}{}", iter::repeat("\u{2500}\u{2501}\u{2500}\u{2534}").take(7).fold(String::new(), |acc, s| {
         acc + s
     }));
+}
+
+fn flush_stdout() {
+    io::stdout().flush().ok().expect("Could not flush stdout");
 }
